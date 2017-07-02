@@ -5,18 +5,17 @@ import java.util.List;
 
 import org.craftedsw.tripservicekata.exception.UserNotLoggedInException;
 import org.craftedsw.tripservicekata.user.User;
-import org.craftedsw.tripservicekata.user.UserSession;
 
 public class TripService {
 
-	public List<Trip> getTripsByUser(User user) throws UserNotLoggedInException {
+	public List<Trip> getTripsByUser(User user, User loggedInUser) throws UserNotLoggedInException {
 		//loggedUser가 나. 내가user의 친구이면 목록 볼수있다. 
-		if(getLoggedInUser() == null){
+		if(loggedInUser == null){
 			throw new UserNotLoggedInException();
 		}
 		
 		
-		return user.isFriendsWith(getLoggedInUser())
+		return user.isFriendsWith(loggedInUser)
 						? tripsBy(user)
 						: noTrips();
 			
@@ -52,8 +51,8 @@ public class TripService {
 		return TripDAO.findTripsByUser(user);
 	}
 
-	protected User getLoggedInUser() {
-		return UserSession.getInstance().getLoggedUser();
-	}
+//	private User getLoggedInUser() {
+//		return UserSession.getInstance().getLoggedUser();
+//	}
 	
 }

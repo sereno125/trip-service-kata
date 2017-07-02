@@ -18,23 +18,17 @@ public class TripServiceTest {
 	private static final User ANOTHER_USER = new User();
 	private static final Trip TO_BRAZIL = new Trip();
 	private static final Trip TO_LONDON = new Trip();
-	private User loggedInUser;
 	
 	private TripService tripService;
 
 	@Before
 	public void initialise(){
 		tripService = new TestableTripService();
-		
-		loggedInUser = REGISTERD_USER;
 	}
 	
 	@Test(expected = UserNotLoggedInException.class) public void
 	should_throw_and_exception_when_is_not_logged_in(){
-		
-		loggedInUser = GUEST;
-		
-		tripService.getTripsByUser(UNUSED_USER);
+		tripService.getTripsByUser(UNUSED_USER, GUEST);
 	}
 	
 	@Test public void
@@ -46,7 +40,7 @@ public class TripServiceTest {
 										.withTrips(TO_BRAZIL)
 										.build() ;
 		
-		List<Trip> friendTrips = tripService.getTripsByUser(friend);
+		List<Trip> friendTrips = tripService.getTripsByUser(friend, REGISTERD_USER);
 		
 		assertThat(friendTrips.size(), org.hamcrest.Matchers.is(0));
 		
@@ -57,7 +51,7 @@ public class TripServiceTest {
 		//절대 소스는 copy & paste 하지 마라  
 		
 		User friend = UserBuilder.aUSer()
-										.friendsWith(ANOTHER_USER, loggedInUser)
+										.friendsWith(ANOTHER_USER, REGISTERD_USER)
 										.withTrips(TO_BRAZIL, TO_LONDON)
 										.build();
 		
@@ -68,17 +62,12 @@ public class TripServiceTest {
 //		friend.addTrip(TO_BRAZIL);
 //		friend.addTrip(TO_LONDON);
 		
-		List<Trip> friendTrips = tripService.getTripsByUser(friend);
+		List<Trip> friendTrips = tripService.getTripsByUser(friend, REGISTERD_USER);
 		
 		assertThat(friendTrips.size(), org.hamcrest.Matchers.is(2));
 	}
 	
 	private class TestableTripService extends TripService{
-
-		@Override
-		protected User getLoggedInUser() {
-			return loggedInUser ;
-		}
 
 		protected List<Trip> tripsBy(User user) {
 			return user.trips() ;
