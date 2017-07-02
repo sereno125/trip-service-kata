@@ -2,6 +2,7 @@ package org.craftedsw.tripservicekata.trip;
 
 import static org.junit.Assert.assertThat;
 
+
 import java.util.List;
 
 import org.craftedsw.tripservicekata.exception.UserNotLoggedInException;
@@ -39,9 +40,11 @@ public class TripServiceTest {
 	@Test public void
 	should_not_return_any_trips_when_users_are_not_friends(){
 		
-		User friend = new User();
-		friend.addFriend(ANOTHER_USER);
-		friend.addTrip(TO_BRAZIL);
+		//빌더를 통해 코드의 가독성이 매우 좋아짐.  
+		User friend = UserBuilder.aUSer()
+										.friendsWith(ANOTHER_USER)
+										.withTrips(TO_BRAZIL)
+										.build() ;
 		
 		List<Trip> friendTrips = tripService.getTripsByUser(friend);
 		
@@ -53,11 +56,17 @@ public class TripServiceTest {
 	should_return_friend_trips_when_users_are_friends(){
 		//절대 소스는 copy & paste 하지 마라  
 		
-		User friend = new User();
-		friend.addFriend(ANOTHER_USER);
-		friend.addFriend(loggedInUser);
-		friend.addTrip(TO_BRAZIL);
-		friend.addTrip(TO_LONDON);
+		User friend = UserBuilder.aUSer()
+										.friendsWith(ANOTHER_USER, loggedInUser)
+										.withTrips(TO_BRAZIL, TO_LONDON)
+										.build();
+		
+		//중복코드 제거를 위해 빌더 적용 
+//		User friend = new User();
+//		friend.addFriend(ANOTHER_USER);
+//		friend.addFriend(loggedInUser);
+//		friend.addTrip(TO_BRAZIL);
+//		friend.addTrip(TO_LONDON);
 		
 		List<Trip> friendTrips = tripService.getTripsByUser(friend);
 		
