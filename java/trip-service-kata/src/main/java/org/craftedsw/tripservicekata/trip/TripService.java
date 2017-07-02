@@ -5,18 +5,18 @@ import java.util.List;
 
 import org.craftedsw.tripservicekata.exception.UserNotLoggedInException;
 import org.craftedsw.tripservicekata.user.User;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class TripService {
+	
+	@Autowired private TripDAO tripDAO;
 
-	public List<Trip> getTripsByUser(User user, User loggedInUser) throws UserNotLoggedInException {
-		//loggedUser가 나. 내가user의 친구이면 목록 볼수있다. 
-		if(loggedInUser == null){
-			throw new UserNotLoggedInException();
-		}
+	public List<Trip> getFriendTrips(User friend, User loggedInUser) throws UserNotLoggedInException {
 		
+		validate(loggedInUser);
 		
-		return user.isFriendsWith(loggedInUser)
-						? tripsBy(user)
+		return friend.isFriendsWith(loggedInUser)
+						? tripsBy(friend)
 						: noTrips();
 			
 		//1. 제일 얕은 indent
@@ -43,14 +43,22 @@ public class TripService {
 //		}
 	}
 
+	private void validate(User loggedInUser) {
+		if(loggedInUser == null){
+			throw new UserNotLoggedInException();
+		}
+	}
+
 	private ArrayList<Trip> noTrips() {
 		return new ArrayList<Trip>();
 	}
 
-	protected List<Trip> tripsBy(User user) {
-		return TripDAO.findTripsByUser(user);
+	private List<Trip> tripsBy(User user) {
+		return tripDAO.tripsBy(user);
+		//return TripDAO.findTripsByUser(user);
 	}
-
+	
+	// 서버단(모델)에서 웹프레임워크(session정보와같은것)을 직접 참조하고 있다. 
 //	private User getLoggedInUser() {
 //		return UserSession.getInstance().getLoggedUser();
 //	}
