@@ -17,12 +17,16 @@ public class TripService {
 		//1. 제일 얕은 indent
 		//- 로그인되지 않은 유저이면 exception
 		if (loggedUser != null) {
+			// 두번째로 깊은 indent
+			// 코드스멜 중 feature envy
+			// user의 일을 tripservice가 탐내고 있다.user의 일은 user에게 물어봐야 한다.
 			for (User friend : user.getFriends()) {
 				if (friend.equals(loggedUser)) {
 					isFriend = true;
 					break;
 				}
 			}
+			//가장 깊은 indent 
 			if (isFriend) {
 				tripList = tripsBy(user);
 			}
